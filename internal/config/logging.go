@@ -2,14 +2,14 @@ package config
 
 import (
 	"bufio"
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"os"
 )
 
 // LoggingConfig структура с настройками логгирования
 type LoggingConfig struct {
-	Level string `config:"level"`
-	Filename  string `config:"filename"`
+	Level    string `config:"level"`
+	Filename string `config:"filename"`
 }
 
 // ConfigureLogging настраивает журналирование и возвращает готовый объект логгера

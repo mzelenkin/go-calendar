@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/mzelenkin/mcalendar/internal/config"
+	"github.com/mzelenkin/go-calendar/internal/config"
 	"os"
 )
 
 const ConfigFilename = "./configs/config.yaml"
 
-func main()  {
+func main() {
 	cfg, err := config.LoadConfig(ConfigFilename)
 	exitIfError(err)
 
@@ -19,7 +19,7 @@ func main()  {
 	log.Info("Hello")
 }
 
-func exitIfError(err error)  {
+func exitIfError(err error) {
 	if err != nil {
 		println("Error: ", err.Error())
 		os.Exit(1)
