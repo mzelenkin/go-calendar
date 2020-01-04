@@ -106,3 +106,34 @@ func TestEventUsecases_Update(t *testing.T) {
 		t.Fail()
 	}
 }
+
+// TestEventUsecases_Crosses проверяет пересекающиеся события
+func TestEventUsecases_Crosses(t *testing.T) {
+	var err error
+	ctx := context.Background()
+
+	storage, _ := inmemory.NewEventInMemoryStorage()
+	usecase := NewEventUsecases(storage)
+
+	_, err = usecase.Create(ctx, &CreateEventRequest{
+		Title:       "Событие №1",
+		Start:       time.Now(),
+		End:         time.Now().Add(1 * time.Hour),
+		Description: "Это описание обновленного события",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = usecase.Create(ctx, &CreateEventRequest{
+		Title:       "Пересекающееся событие",
+		Start:       time.Now().Add(30 * time.Minute),
+		End:         time.Now().Add(1 * time.Hour),
+		Description: "Это описание обновленного события",
+	})
+
+	if err != ErrorDateBusy {
+		t.Error(err)
+		t.Fail()
+	}
+}

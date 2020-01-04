@@ -41,6 +41,31 @@ func (i *EventInMemoryStorage) Update(ctx context.Context, event *entities.Event
 	return nil
 }
 
+func (i *EventInMemoryStorage) ListAll(ctx context.Context, page int, itemsPerPage int) ([]entities.Event, error) {
+	var ret []entities.Event
+	var counter int
+	startRec := page * itemsPerPage
+	endRec := page*itemsPerPage + itemsPerPage
+
+	for _, v := range i.data {
+
+		// Пагинация
+		if counter < startRec {
+			continue
+		}
+
+		if counter >= endRec {
+			break
+		}
+
+		counter++
+
+		ret = append(ret, v)
+	}
+
+	return ret, nil
+}
+
 // FindBySpan возвращает все события, лежащие в указанном временном диапазоне start..end
 // Параметры page и itemsPerPage
 func (i *EventInMemoryStorage) FindBySpan(ctx context.Context, start time.Time, end time.Time, page int, itemsPerPage int) ([]entities.Event, error) {
