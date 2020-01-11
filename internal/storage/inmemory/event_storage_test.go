@@ -151,7 +151,7 @@ func TestEventInMemoryStorage_GetByRange(t *testing.T) {
 	}
 
 	// При выборке за час, в результат
-	events, err := s.FindBySpan(ctx, time.Now(), time.Now().Add(1*time.Hour), 0, 10)
+	events, err := s.FindBySpan(ctx, time.Now(), time.Now().Add(1*time.Hour))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -160,7 +160,7 @@ func TestEventInMemoryStorage_GetByRange(t *testing.T) {
 	}
 
 	// При выборе за 1:15 в выборку попадет 2 события
-	events, err = s.FindBySpan(ctx, time.Now(), time.Now().Add(1*time.Hour+15*time.Minute), 0, 10)
+	events, err = s.FindBySpan(ctx, time.Now(), time.Now().Add(1*time.Hour+15*time.Minute))
 	if err != nil {
 		t.Fatal(err)
 	}

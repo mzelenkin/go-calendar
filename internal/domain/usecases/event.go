@@ -24,7 +24,7 @@ type UpdateEventRequest struct {
 	Description string
 }
 
-type ListAllResponseItem struct {
+type ListResponseItem struct {
 	ID          string    `json:"id"`
 	Title       string    `json:"title"`
 	Start       time.Time `json:"start"`
@@ -35,12 +35,11 @@ type ListAllResponseItem struct {
 // EventUsecases сценарии использования для события
 // При расширении эта структура может превратиться в фасад к use case'ам
 type EventUsecases struct {
-	storage      EventStorage
-	ItemsPerPage int
+	storage EventStorage
 }
 
 func NewEventUsecases(storage EventStorage) *EventUsecases {
-	return &EventUsecases{storage: storage, ItemsPerPage: 25}
+	return &EventUsecases{storage: storage}
 }
 
 // Create создает событие и возвращает его ID
@@ -53,7 +52,7 @@ func (u EventUsecases) Create(ctx context.Context, data *CreateEventRequest) (st
 	}
 
 	// В общем-то не важно, сколько тут повится записей, т.к. по идее либо что-то есть и тогда ошибка, либо их нет.
-	item, err := u.storage.FindBySpan(ctx, data.Start, data.End, 0, 2)
+	item, err := u.storage.FindBySpan(ctx, data.Start, data.End)
 	if err != nil {
 		return "", err
 	}
@@ -95,7 +94,7 @@ func (u EventUsecases) Update(ctx context.Context, data *UpdateEventRequest) err
 		return err
 	}
 
-	item, err := u.storage.FindBySpan(ctx, data.Start, data.End, 0, 2)
+	item, err := u.storage.FindBySpan(ctx, data.Start, data.End)
 	if err != nil {
 		return err
 	}
@@ -129,18 +128,55 @@ func (u EventUsecases) Delete(ctx context.Context, id entities.EventID) error {
 	return u.storage.DeleteByID(ctx, &id)
 }
 
-// ListAll возвращает список
-func (u EventUsecases) ListAll(ctx context.Context, page int) ([]ListAllResponseItem, error) {
-	items, err := u.storage.ListAll(ctx, page, u.ItemsPerPage)
+// ListDay возвращает список событий за указанный день
+func (u EventUsecases) ListDay(ctx context.Context, day time.Time) ([]ListResponseItem, error) {
+	start := bod(day)
+	end := eod(day)
+
+	ret, err := u.findBySpan(ctx, start, end)
 	if err != nil {
 		return nil, err
 	}
 
-	var ret []ListAllResponseItem
+	return ret, nil
+}
+
+// ListWeek возвращает список событий за указанную неделю
+func (u EventUsecases) ListWeek(ctx context.Context, day time.Time) ([]ListResponseItem, error) {
+	start, end := weekRange(day)
+
+	ret, err := u.findBySpan(ctx, start, end)
+	if err != nil {
+		return nil, err
+	}
+
+	return ret, nil
+}
+
+// ListMonth возвращает список событий за указанный месяц
+func (u EventUsecases) ListMonth(ctx context.Context, day time.Time) ([]ListResponseItem, error) {
+	start, end := monthRange(day)
+
+	ret, err := u.findBySpan(ctx, start, end)
+	if err != nil {
+		return nil, err
+	}
+
+	return ret, nil
+}
+
+// findBySpan ищет события из указанного промежутка и маппит их на DTO
+func (u EventUsecases) findBySpan(ctx context.Context, start time.Time, end time.Time) ([]ListResponseItem, error) {
+	items, err := u.storage.FindBySpan(ctx, start, end)
+	if err != nil {
+		return nil, err
+	}
+
+	ret := make([]ListResponseItem, len(items))
 
 	// Заполняем DTO
 	for _, v := range items {
-		ret = append(ret, ListAllResponseItem{
+		ret = append(ret, ListResponseItem{
 			ID:          v.ID.String(),
 			Title:       v.Title,
 			Start:       v.Start,
@@ -148,6 +184,5 @@ func (u EventUsecases) ListAll(ctx context.Context, page int) ([]ListAllResponse
 			Description: v.Description,
 		})
 	}
-
 	return ret, nil
 }
