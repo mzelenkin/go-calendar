@@ -172,7 +172,7 @@ func (u EventUsecases) findBySpan(ctx context.Context, start time.Time, end time
 		return nil, err
 	}
 
-	ret := make([]ListResponseItem, len(items))
+	var ret []ListResponseItem
 
 	// Заполняем DTO
 	for _, v := range items {
