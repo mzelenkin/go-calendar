@@ -1,6 +1,6 @@
 module github.com/mzelenkin/go-calendar
 
-go 1.13
+go 1.14
 
 require (
 	github.com/go-playground/validator/v10 v10.0.1

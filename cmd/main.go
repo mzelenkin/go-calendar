@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/mzelenkin/go-calendar/internal/config"
+	"log"
 	"os"
 )
 
@@ -12,16 +13,16 @@ func main() {
 	cfg, err := config.LoadConfig(ConfigFilename)
 	exitIfError(err)
 
-	log, err := config.ConfigureLogging(&cfg.Log)
+	logger, err := config.ConfigureLogging(&cfg.Log)
 	exitIfError(err)
 
 	fmt.Printf("Configuration loaded: %+v\n", *cfg)
-	log.Info("Hello")
+	logger.Info("Hello")
 }
 
 func exitIfError(err error) {
 	if err != nil {
-		println("Error: ", err.Error())
+		log.Fatal("Error: ", err.Error())
 		os.Exit(1)
 	}
 }

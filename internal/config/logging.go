@@ -29,8 +29,7 @@ func ConfigureLogging(config *LoggingConfig) (*logrus.Logger, error) {
 	logrus.SetLevel(level)
 
 	logrus.SetFormatter(&logrus.TextFormatter{
-		FullTimestamp:    true,
-		DisableTimestamp: false,
+		FullTimestamp: true,
 	})
 
 	return logrus.StandardLogger(), nil

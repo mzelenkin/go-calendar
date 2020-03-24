@@ -43,11 +43,8 @@ func (i *EventInMemoryStorage) Update(ctx context.Context, event *entities.Event
 
 func (i *EventInMemoryStorage) ListAll(ctx context.Context) ([]entities.Event, error) {
 	var ret []entities.Event
-	var counter int
 
 	for _, v := range i.data {
-		counter++
-
 		ret = append(ret, v)
 	}
 
