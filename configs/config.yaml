@@ -1,5 +1,7 @@
-listen:
-  port: 7891
-  address: 0.0.0.0
+http:
+  listen: "0.0.0.0:7879"
 log:
-  level: "warn"
+  textlogging: false # Писать журнал как текст или как json
+  file: "runtime/logs.txt"   # Имя файла
+  file_append: false # дополнять или переписывать
+  level: "debug"     # Уровень журналирования
